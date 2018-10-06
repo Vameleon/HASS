@@ -1,0 +1,10 @@
+secrets.yaml
+tellduslive.conf
+deps/
+*.log
+*.db
+tts/
+.uuid
+.cloud
+.HA_VERSION
+

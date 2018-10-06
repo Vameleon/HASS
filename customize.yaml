@@ -1,0 +1,54 @@
+  switch.koket_grill:
+    friendly_name: Grillen
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:fire
+
+
+
+  switch.reem_rums_bords_lamp:
+    friendly_name: Skrivbordslampa
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:lamp
+  light.Reema_tak_lampa:
+    friendly_name: Taklampa
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:ceiling-light
+
+ 
+
+  switch.zeina_rum_stand_lamp:
+    friendly_name: Golvlampa
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:lava-lamp
+
+  light.Zeina_tak_lampa:
+    friendly_name: Taklampa
+    icon: mdi:ceiling-light
+
+  light.LGH1301_vard_tak:
+    friendly_name: Taklampa
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:ceiling-light
+  switch.vardags_rum_kaffebord_lamp:
+    friendly_name: Kaffebordslampa
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:lamp
+  light.vardags_rum_bord_lamp:
+    friendly_name: Skåpslampa
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:lamp
+  switch.LGH1301_extra:
+    friendly_name: Extra Brytare
+    icon: mdi:shape-plus
+  
+  sensor.yrweather_temperature:
+    friendly_name: Temperatur
+#    entity_picture: /local/toaster.jpg
+    icon: mdi:temperature-celsius
+
+
+
+  
+  
+
+

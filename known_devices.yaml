@@ -1,0 +1,32 @@
+
+tariq:
+  hide_if_away: false
+  icon: mdi:human-male
+  mac:
+  name: Tariq
+  picture:
+  track: true
+  vendor:
+  consider_home: 720
+zeina:
+  hide_if_away: false
+  icon: mdi:human-female
+  mac:
+  name: Zeina
+  picture:
+  track: true
+  vendor:
+#time until device considered away
+  consider_home: 720
+
+
+reema:
+  hide_if_away: false
+  icon: mdi:human-female
+  mac:
+  name: Reema
+  picture:
+  track: true
+  vendor:
+  consider_home: 720
+

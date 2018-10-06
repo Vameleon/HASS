@@ -1,0 +1,56 @@
+transport:
+  name: Transport
+  entities:
+    - sensor.Sahlgrenska
+    - sensor.Centralstationen
+    - sensor.Brunssparken
+    - sensor.Lindholmen
+
+weather:
+  name: Väder
+  entities:
+    - sensor.yrweather_temperature
+    - sensor.yrweather_symbol
+    - sensor.yrweather_precipitation
+    - sensor.yrweather_wind_speed
+    - sensor.yrweather_pressure
+    - sensor.yrweather_humidity
+    - sensor.yrweather_fog
+    - sensor.yrweather_cloudiness
+    - sensor.yrweather_low_Clouds
+    
+
+koket:
+  name: Köket
+  entities:
+    - switch.koket_grill
+      
+
+
+reem-r:
+  name: Reemas Rum
+  entities:
+    - switch.reem_rums_bords_lamp
+    - light.Reema_tak_lampa
+
+      
+zeina-r:
+  name: Zeinas Rum
+  entities:
+    - switch.zeina_rum_stand_lamp
+    - light.Zeina_tak_lampa
+   
+
+vardags-r:
+  name: Vardags Rummet
+  entities:
+    - input_select.hdmi_select
+    - sensor.time_worldclock
+    - switch.vardags_rum_kaffebord_lamp
+    - switch.LGH1301_extra
+    - light.vardags_rum_bord_lamp
+    - light.LGH1301_vard_tak
+
+     
+
+    

@@ -1,0 +1,54 @@
+<dom-module id='ha-panel-hello'>
+  <template>
+    <style>
+      p {
+        font-weight: bold;
+        background-color:#2E2E2E;
+
+      }
+    </style>
+    <font color="white">
+    <p>Greetings from Home Assistant and Tariq A.</p>
+    <p>Home-Appliance Automation and Control System (HAACS) by Tariq A.</p>
+    <p>The backend is developed by Tariq A.</p>
+    <p>www.tariq.world</p>
+  </font> 
+  </template>
+</dom-module>
+
+<script>
+class HaPanelHello extends Polymer.Element {
+  static get is() { return 'ha-panel-hello'; }
+  
+  static get properties() {
+    return {
+      // Home Assistant object
+      hass: Object,
+      // If should render in narrow mode
+      narrow: {
+        type: Boolean,
+        value: false,
+      },
+      // If sidebar is currently shown
+      showMenu: {
+        type: Boolean,
+        value: false,
+      },
+      // Home Assistant panel info
+      // panel.config contains config passed to register_panel serverside
+      panel: Object,
+      who: {
+        type: String,
+        computed: 'computeWho(panel)',
+      },
+    };
+  }
+
+  computeWho(panel) {
+    return panel && panel.config && panel.config.who ? panel.config.who : 'World';
+  }
+}
+customElements.define(HaPanelHello.is, HaPanelHello);
+</script>
+
+

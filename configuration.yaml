@@ -1,0 +1,487 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: LGH1301
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret home_lati
+  longitude: !secret home_long
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 3
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Stockholm
+  # Customization file
+  customize: !include customize.yaml
+
+# Show links to resources in log and frontend
+introduction:
+
+# Enables the frontend
+frontend:
+  javascript_version: latest
+  themes:
+#    red:
+#      primary-color: red
+#    orange:
+#      primary-color: orange
+#    yellow:
+#      primary-color: "#cccc00"
+    green:
+       primary-color: "#009900"
+
+
+# Enables configuration UI
+config:
+
+http:
+  # Secrets are defined in the file secrets.yaml
+  api_password: !secret http_password
+  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  # base_url: example.duckdns.org:8123
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+#updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+#discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+sun:
+
+
+# Text to speech
+tts:
+  - platform: google
+
+# Cloud
+#cloud:
+
+group: !include groups.yaml
+script: !include scripts.yaml
+#automation: !include automations.yaml
+
+
+#Prv's Section
+light:
+  - platform: tplink
+    host: !secret tplink_lb100_zeina_r_ip
+  - platform: tplink  
+    host: !secret tplink_lb100_vardags_r_ip
+  - platform: tplink
+    host: !secret tplink_lb100_reema_r_ip
+
+
+
+
+
+panel_custom:
+  - name: hello
+    sidebar_title: HAACS
+    url_path: hello
+    sidebar_icon: mdi:arrange-send-to-back
+
+panel_iframe:
+  tv_backend:
+    title: 'Nyheter & Radio (HauToMaTs)'
+    url: !secret hautomats_ip
+    icon: mdi:radio
+
+
+input_select:
+  hdmi_select:
+    name: HDMI Input
+    options:  
+     - TV(Digital-Box)
+     - AUX
+    initial: TV(Digital-Box)
+    icon: mdi:video-input-hdmi
+
+#icon	
+device_tracker:
+  - platform: ping
+    hosts:
+      tariq: !secret tariq_ip 
+      zeina: !secret zeina_ip
+      reema: !secret reema_ip
+    interval_seconds: 5
+
+weblink:
+  entities:
+    - name: GP
+      url: http://www.gp.se
+    - name: SvD
+      url: https://www.svd.se     
+
+
+shell_command:
+
+  set_hdmi_ch_a: "python2 /home/tariq/scripts/TV_BACKEND_CMD.py A"
+  set_hdmi_ch_b: "python2 /home/tariq/scripts/TV_BACKEND_CMD.py B"
+
+automation:
+  - alias: "Switch to CH to Digital-Box"
+    trigger:
+      platform: state
+      entity_id: input_select.hdmi_select
+      to: 'TV(Digital-Box)'
+    action:
+      service: shell_command.set_hdmi_ch_a
+
+  - alias: "Switch to CH AUX"
+    trigger:
+      platform: state
+      entity_id: input_select.hdmi_select
+      to: 'AUX'
+    action:
+      service: shell_command.set_hdmi_ch_b
+    
+
+  - alias: "Auto Dim@AUX"
+    trigger:
+      - platform: state
+        entity_id: input_select.hdmi_select
+        to: 'AUX'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: 'below_horizon'
+    action:
+        service: scene.turn_on
+        entity_id: scene.vardagsrum_dimmad
+
+  - alias: "Auto Brighten@Digital-BOX"
+    trigger:
+      - platform: state
+        entity_id: input_select.hdmi_select
+        to: 'TV(Digital-Box)'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: 'below_horizon'
+    action:
+        service: scene.turn_on
+        entity_id: scene.vardagsrum_normal
+    
+      
+  - alias: "Grill_timer (2min)"
+    trigger:
+      platform: state
+      entity_id: switch.koket_grill
+      to: 'on'
+      for:
+        minutes: 2
+    action:
+      service: homeassistant.turn_off
+      entity_id: switch.koket_grill
+
+
+
+  - alias: "Vardags Kaffe-B Auto On"
+    trigger:
+      platform: time
+      at: '17:00:00'
+    action:
+      service: switch.turn_on
+      entity_id: switch.vardags_rum_kaffebord_lamp
+
+
+  - alias: "Vardags Kaffe-B Auto OFF"
+    trigger:
+      platform: time
+      at: '18:00:00'
+    action:
+      service: switch.turn_off
+      entity_id: switch.vardags_rum_kaffebord_lamp
+
+
+  - alias: "Vardags Skåps-B Auto On"
+    trigger:
+      platform: time
+      at: '18:00:00'
+    action:
+      service: light.turn_on
+      entity_id: light.vardags_rum_bord_lamp 
+
+
+
+  - alias: "Vardags Skåps-B Auto OFF"
+    trigger:
+      platform: time
+      at: '22:20:00'
+    action:
+      service: light.turn_off
+      entity_id: light.vardags_rum_bord_lamp 
+
+
+  - alias: "Reemas-R SkrivbordsL Auto ON"
+    trigger:
+      platform: state
+      entity_id: device_tracker.reema
+      to: 'home'
+
+    condition:
+      - condition: time
+        before: '22:57:00'
+        after: '15:00:00'
+        
+#        - condition: zone
+#          entity_id: device_tracker.reema
+#          zone: zone.home
+
+    action:
+      service: switch.turn_on
+      entity_id: switch.reem_rums_bords_lamp
+
+  - alias: "Reemas-R SkrivbordsL Auto OFF"
+    trigger:
+      platform: time
+      at: '23:00:00'
+    action:
+      service: switch.turn_off
+      entity_id: switch.reem_rums_bords_lamp
+
+
+
+  - alias: "Zeina-R Golvlampa Auto ON"
+    trigger:
+      - platform: state
+        entity_id: device_tracker.zeina
+        to: 'home'
+    condition:
+      - condition: time
+        before: '22:57:00'
+        after: '15:00:00'
+        
+  #    condition: and
+  #    conditions:
+        
+#        - condition: sun
+#          after: sunset
+#          after_offset: "00:00:00"
+#        
+#        - condition: time
+#          before: '22:59:00'
+
+    action:
+      service: switch.turn_on
+      entity_id: switch.zeina_rum_stand_lamp
+
+  - alias: "Zeina-R Golvlampa Auto OFF"
+    trigger:
+      platform: time
+      at: '23:00:00'
+    action:
+      service: switch.turn_off
+      entity_id: switch.zeina_rum_stand_lamp
+#  - alias: 'Turn vardags on'
+#    trigger:
+#      platform: time
+#      at: '15:00:00'
+#    action:
+#      service: light.turn_on
+#      entity_id: light.lounge_5_0
+#    
+#    
+#  - alias: 'Light off at night'
+#    trigger:
+#      platform: time
+#      at: '21:00:00'
+#    action:
+#      service: light.turn_off
+#      entity_id: light.lounge_5_0
+    
+  - alias: "Zeina-R TakL Auto ON"
+    trigger:
+      platform: time
+      at: '06:00:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.Zeina_tak_l
+          brightness: 50
+
+  - alias: "Zeina-R TakL Auto OFF"
+    trigger:
+      platform: time
+      at: '07:30:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+    action:
+      - service: light.turn_off
+        data:
+          entity_id: light.Zeina_tak_l
+
+
+
+
+
+
+
+
+
+###########################################################################################
+#####################################SCENE Section#########################################
+###########################################################################################
+
+
+scene:
+  - name: Vardagsrum Normal
+    entities:
+        
+        light.vardags_rum_bord_lamp:
+            state: on
+            transition: 8
+            brightness_pct: 85
+        
+        light.lgh1301_vard_tak:
+            state: on
+            brightness_pct: 85        
+  
+  - name: Vardagsrum Dimmad
+    entities:
+        switch.vardags_rum_kaffebord_lamp:
+            state: off
+        light.vardags_rum_bord_lamp:
+            state: on
+            transition: 8
+            brightness_pct: 15
+        light.lgh1301_vard_tak:
+            state: on
+            brightness_pct: 3    
+
+###########################################################################################
+#####################################SCENE Section#########################################
+###########################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+tellduslive:
+  host: !secret tellduslive_ip
+  update_interval: 5
+
+
+
+######
+#switch:
+#  - platform: vera
+#    name: TestingA1Switch
+#    alias: Switch 1 - Test#
+#switch:
+#  - platform: command_line
+#    switches:
+#      tv_hdmi_input:
+#        command_on: "python2 /home/tariq/scripts/TV_BACKEND_CMD.py A"
+#        command_off: "python2 /home/tariq/scripts/TV_BACKEND_CMD.py B"
+#        friendly_name: TV HDMI Input
+
+
+
+######
+sensor:
+  - platform: worldclock
+    time_zone: Europe/Brussels
+    name: Brussels Time
+   
+ 
+  
+  - platform: vasttrafik
+    key: !secret vasttrafik_key
+    secret: !secret vasttrafik_secret
+    departures:
+      - name: Brunssparken
+        from: Smyckegatan
+        heading: Brunnsparken
+        delay: 70
+  
+  - platform: vasttrafik
+    key: !secret vasttrafik_key
+    secret: !secret vasttrafik_secret
+    departures:
+      - name: Lindholmen
+        from: Smyckegatan
+        heading: Lindholmen
+        delay: 70
+
+  - platform: vasttrafik
+    key: !secret vasttrafik_key
+    secret: !secret vasttrafik_secret
+    departures:
+      - name: Centralstationen 
+        from: Frölunda Torg Spårvagn
+        heading: Centralstationen
+        delay: 70
+  
+  - platform: vasttrafik
+    key: !secret vasttrafik_key
+    secret: !secret vasttrafik_secret
+    departures:
+      - name: Sahlgrenska
+        from: Frölunda Torg Spårvagn
+        heading: Sahlgrenska Huvudentre
+        delay: 70      
+
+  - platform: yr
+    name: yr-weather
+    forecast: 6
+    monitored_conditions:
+      - temperature
+#      - symbol
+      - precipitation
+      - windSpeed
+      - pressure
+#      - windDirection
+#      - humidity
+#      - fog
+#      - cloudiness
+#      - lowClouds
+#      - mediumClouds
+#      - highClouds
+#      - dewpointTemperature
+
+
